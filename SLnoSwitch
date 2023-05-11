@@ -1,0 +1,46 @@
+import Jetson.GPIO as GPIO
+import time
+GPIO.cleanup
+#GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD) 
+
+
+SL_INT1=38  #in1_YELLOW
+SL_INT2=40  #IN2_BLUE
+switch_up=35     #NC
+switch_down=36   #NC
+
+GPIO.setup(SL_INT1,GPIO.OUT)
+GPIO.setup(SL_INT2,GPIO.OUT)
+
+def goUp():
+    GPIO.output(SL_INT1,GPIO.HIGH)
+    GPIO.output(SL_INT2,GPIO.LOW)
+
+def goDown():
+    GPIO.output(SL_INT1,GPIO.LOW)
+    GPIO.output(SL_INT2,GPIO.HIGH)
+
+def SLstop():
+    GPIO.output(SL_INT1,GPIO.LOW)
+    GPIO.output(SL_INT2,GPIO.LOW)
+
+def SLrun():
+    start_up=time.time()
+    end_up=start_up+16     # 16 seconds
+    while(time.time()<=end_up):
+        goUp()
+    SLstop()
+
+    print("charging time")
+    time.sleep(5) # 5 secs of changing time
+
+    start_down=time.time()
+    end_down=start_down+16
+    while(time.time()<=end_down):
+        goDown()
+    SLstop()
+    GPIO.cleanup()
+
+SLrun()
+        
